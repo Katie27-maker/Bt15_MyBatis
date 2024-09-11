@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lec.spring.repository.GridRepository">
+
+    <resultMap id="mapGrid" type="com.lec.spring.domain.GridDTO">
+        <result column="user_id" property="user_id"/>
+        <result column="name" property="name"/>
+        <result column="gender" property="gender"/>
+        <result column="regDate" property="regDate"/>
+        <result column="nation" property="nation"/>
+        <result column="city" property="city"/>
+    </resultMap>
+
+    <resultMap id="mapGridId" type="String">
+        <result column="user_id" property="user_id"/>
+    </resultMap>
+
+    <resultMap id="mapNation" type="com.lec.spring.domain.Nation">
+        <result column="nation" property="nation"/>
+        <result column="city" property="city"/>
+    </resultMap>
+
+<!--    <resultMap id="mapGrid" type="com.lec.spring.domain.Grid">-->
+<!--        <result column="g_id" property="id"/>-->
+<!--        <result column="g_user_id" property="user_id"/>-->
+<!--        <result column="g_name" property="name"/>-->
+<!--        <result column="g_gender" property="gender"/>-->
+<!--        <result column="g_regDate" property="regDate"/>-->
+<!--        <collection property="Nation" resultMap="mapNation"/>-->
+<!--    </resultMap>-->
+
+<!--    <resultMap id="mapNation" type="com.lec.spring.domain.nation">-->
+<!--        <result column="n_id" property="id"/>-->
+<!--        <result column="n_nation" property="nation"/>-->
+<!--        <result column="n_city" property="city"/>-->
+<!--    </resultMap>-->
+
+
+    <select id="findAll" resultMap="mapGrid">
+        select *
+--         Select
+--                g.user_id "user_id",
+--                g.name "name",
+--                g.gender "gender",
+--                g.regDate "regDate",
+--                n.nation "nation",
+--                n.city "city"
+        From grid g, nation n
+        where
+            g.nation_id = n.id
+        order by g.regDate desc
+    </select>
+
+    <select id="search" resultMap="mapGrid">
+        select *
+        From grid g, nation n
+        where g.nation_id = n.id
+          AND (#{user_id} IS NULL OR g.user_id = #{user_id})
+          AND (#{name} IS NULL OR g.name = #{name})
+          AND (#{gender} IS NULL OR g.gender = #{gender})
+          AND (#{nation} IS NULL OR n.nation = #{nation})
+          AND (#{city} IS NULL OR n.city = #{city})
+          AND (#{startDate} IS NULL OR g.regDate >= #{startDate})
+          AND (#{endDate} IS NULL OR #{endDate} >= g.regDate)
+    </select>
+<!--&lt;!&ndash;    원하는 커럼-->
+<!--        테이블-->
+<!--        일치하는 행 조인-->
+<!--        null을 예외처리하는 case문 넣기-->
+<!--        &ndash;&gt;-->
+    
+    <delete id="delete" flushCache="true"
+            parameterType="String">
+        DELETE FROM grid WHERE grid.user_id = #{user_id}
+    </delete>
+
+    <select id="findAllId" resultMap="mapGridId">
+        SELECT g.user_id
+        from grid g
+    </select>
+
+    <select id="findByNation" resultType="com.lec.spring.domain.Nation">
+        select *
+        from nation n
+        where n.nation = #{nation} AND n.city = #{city}
+    </select>
+
+    <insert id="create" parameterType="com.lec.spring.domain.Grid">
+        INSERT INTO grid (user_id, name, gender, nation_id, regDate) values (#{user_id}, #{name}, #{gender}, #{nation_id}, #{regDate})
+    </insert>
+
+<!--    리포지토리에서 id찾기 헷갈리지 말기-->
+    <update id="upDate" flushCache="true" parameterType="com.lec.spring.domain.Grid">
+        UPDATE grid
+        SET user_id = #{user_id}, name = #{name}, gender = #{gender}, nation_id = #{nation_id}
+        WHERE user_id = #{user_id}
+
+    </update>
+
+    <select id="findAllNation" resultMap="mapNation">
+        select *
+        from nation
+        order by nation.id desc
+    </select>
+
+</mapper>

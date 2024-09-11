@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>main</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+<!--메뉴 영역-->
+<header>
+<!--    메뉴1-->
+    <div class="men1">
+        <!--    아이디 & 이름-->
+        <input id="idBox" placeholder="아이디">
+        <input id="nameBox" placeholder="이름">
+
+        <!--    성별 체크 박스-->
+        <p><label><input id="gMale" type="radio" name="fliterGender" value="남"> 남자</label></p>
+        <p><label><input id="gFmale" type="radio" name="fliterGender" value="여"> 여자</label></p>
+    </div>
+<!--    메뉴2-->
+    <div class="men2">
+        <!--나라 선택 박스-->
+            <select name="filter" id="filterNation" onchange="nationBtnChange(this)">
+                <option value="">-- 국가 선택 --</option>
+                <option value="한국">한국</option>
+                <option value="프랑스">프랑스</option>
+                <option value="독일">독일</option>
+            </select>
+
+        <div>
+            <input id="filterCityBtn" type="checkbox" value="">전체</input>
+            <div name="filter" id="filterCity">
+            </div>
+        </div>
+
+<!--        달력 & 날짜 선택-->
+        <label>Calendar Box
+            <input type="date"
+                   id="startDate"
+                   max="yyy"
+                   min="zzz">
+            <input type="date"
+                   id="endDate"
+                   max="yyy"
+                   min="zzz">
+        </label>
+    </div>
+    <div>
+        <button id="addBtn">추가</button>
+        <button id="saveBtn">저장</button>
+        <button id="searchBtn">조회</button>
+
+        <a href="http://localhost:9090/ExcelLoad">엑셀 다운로드</a>
+        <button id="deleteBtn">삭제</button>
+    </div>
+</header>
+<!--검색 영역-->
+<article>
+    <div class="container mt-5">
+        <div class="table-responsive">  <!--스크롤 주는 곳-->
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>선택</th>
+                        <th>아이디</th>
+                        <th>이름</th>
+                        <th>성별</th>
+                        <th>국가</th>
+                        <th>도시</th>
+                    </tr>
+                </thead>
+                <tbody id="addList">
+                    <tr th:each="grid : ${gridData}" class="gridData"> <!-- grid => (id=4, user_id=pat2, name=토토, gender=남, regDate=2024-06-23T00:00, nation=독일, city=브레멘) -->
+                        <td><input class="selectBox" type="checkbox"></td>
+                        <td><input class="userId" type="text" th:value="${grid.user_id}" disabled></td>
+                        <td><input class="userName" type="text" th:value="${grid.name}"></td>
+                        <td class="gridGender">
+                                <input class="userGender" id="male" type="radio" th:name="${grid.user_id}" value="남" th:checked="${grid.gender}=='남'?true:false">
+                                <p>남</p>
+                                <input class="userGender" id="female" type="radio" th:name="${grid.user_id}" value="여" th:checked="${grid.gender}=='여'?true:false">
+                                <p>여</p>
+                        </td>
+                        <!-- 1. 아래 <td>태그들 안에 셀렉트 박스로 설정하기 -->
+                        <!-- 2. 각 select 태그 값들은 grid에 있는 국적과 도시로 설정-->
+                        <!-- 3. 각 select 태그에 option 태그들 설정 -->
+<!--                        <td class="userNation" th:text="${grid.nation}">-->
+<!--                        <td class="userCity" th:text="${grid.city}">-->
+                        <td> <!-- 국가 셀렉트 박스 -->
+                        <select th:name="${grid.user_id}" th:id="${grid.user_id + 'Nation'}" th:value="${grid.nation}" onchange="nationBtnChange(this)" class="userNation">
+                            <option value="">-- 국가 선택 --</option>
+                            <option th:each="nation : ${nationData}" th:text="${nation}" th:value="${nation}" th:selected="${nation == grid.nation}"></option>
+                        </select>
+                        </td>
+                        <td> <!-- 도시 셀렉트 박스 -->
+                            <select th:name="${grid.user_id}" th:id="${grid.user_id + 'City'}" class="userCity">
+                                <option value="">도시를 선택해 주세요.</option>
+                                <option th:each="city : ${cityList[grid.nation]}" th:text="${city}" th:value="${city}" th:selected="${city == grid.city}"></option>
+                            </select>
+                        </td>
+                        <!-- 위 태그까지 -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</article>
+
+<!-- 모달 창 HTML 추가 -->
+<div id="userModal" class="modal" tabindex="-1" role="dialog" style="display: none;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                        <p><input id="modalUserId" type="text"  disabled></p>
+                        <p><input id="modalName" type="text"></p>
+                        <p class="modalGender">
+                            <input id="modalMale" class="modalGender" name="modalGender" type="radio" value="남">
+                            <p>남</p>
+                            <input id="modalFemale" class="modalGender" name="modalGender" type="radio" value="여">
+                            <p>여</p>
+                        </p>
+                        <select id="modalNation" name="modal" onchange="nationBtnChange(this)">
+                            <option value="">-- 국가 선택 --</option>
+                        </select>
+                        <select id="modalCity" name="modal">
+                            <option value="">-- 도시 선택 --</option>
+                        </select>
+            </div>
+            <div class="modal-footer">
+                <button id="changbtn" type="button"  class="btn btn-primary">저장</button>
+                <button id="closebtn" type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+body {
+    background-color: lightpink;
+}
+
+#filterCity {
+    width: 300px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/*스크롤바*/
+.table-responsive {
+    max-height: 500px;   /* 최대 높이를 설정, 그 이상 내용이 넘으면 스크롤바가 나타남 */
+    overflow-y: auto;    /* 스크롤바를 자동으로 표시 */
+    border: 1px solid #ddd; /* 테두리 추가로 영역을 구분 */
+    padding: 10px;       /* 내부 여백 */
+}
+
+/*성별 색상 구분*/
+#male {
+    background-color: lightskyblue;
+}
+#female {
+    background-color: lightpink;
+}
+
+
+/*리스트 칸 설정*/
+.table {
+    border-collapse: collapse; /* 테두리 간격을 없애서 칸이 붙어 나오도록 함 */
+    width: 100%;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd; /* 기본 테두리 설정 */
+    padding: 8px;           /* 셀 안의 패딩 조정 */
+}
+
+.table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.table-responsive {
+    max-height: 400px; /* 테이블 영역에 스크롤 추가 */
+    overflow-y: auto;
+}
+
+.table-bordered th, .table-bordered td {
+    border: none; /* 테두리 제거로 칸을 이어 붙임 */
+}
