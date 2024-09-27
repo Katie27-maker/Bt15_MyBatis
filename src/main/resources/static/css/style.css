@@ -9,13 +9,6 @@ body {
     flex-direction: column;
 }
 
-/*스크롤바*/
-.table-responsive {
-    max-height: 500px;   /* 최대 높이를 설정, 그 이상 내용이 넘으면 스크롤바가 나타남 */
-    overflow-y: auto;    /* 스크롤바를 자동으로 표시 */
-    border: 1px solid #ddd; /* 테두리 추가로 영역을 구분 */
-    padding: 10px;       /* 내부 여백 */
-}
 
 /*성별 색상 구분*/
 #male {
@@ -42,11 +35,26 @@ body {
     text-align: left;
 }
 
-.table-responsive {
-    max-height: 400px; /* 테이블 영역에 스크롤 추가 */
-    overflow-y: auto;
-}
 
 .table-bordered th, .table-bordered td {
     border: none; /* 테두리 제거로 칸을 이어 붙임 */
+}
+
+
+/*행 간격 줄이기*/
+tbody .gridData td {
+    padding: 5px 10px; /* 필요에 따라 padding 값을 조정 */
+    margin: 0;
+}
+
+tbody .gridData input,
+tbody .gridData select,
+tbody .gridData p {
+    margin: 0;
+    padding: 0;
+    line-height: 1.2; /* line-height 값을 조정하여 텍스트 간격을 줄임 */
+}
+
+tbody .gridData {
+    height: auto; /* 행 높이가 동적으로 조정되도록 설정 */
 }

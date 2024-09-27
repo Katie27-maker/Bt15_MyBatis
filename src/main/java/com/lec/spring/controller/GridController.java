@@ -52,6 +52,23 @@ public class GridController {
         return "list";
     }
 
+    @GetMapping("/GridLink")
+    public @ResponseBody Map<String, Object> link(@RequestParam Long grid_id){
+        System.out.println(grid_id);
+        GridDTO gridData = gridService.linkSearch(grid_id);
+        List<Nation> allNationList = gridService.findAllNation();
+        List<String> nationList = allNationList.stream().map(data->data.getNation()).toList();
+        Set<String> resultNationList = new HashSet<>(nationList);
+        System.out.println(gridData);
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("data", gridData);
+        response.put("allNationList",allNationList);
+        response.put("nationData",resultNationList);
+        return response;
+
+    }
+
     // 필터링 컨트롤러
     @PostMapping("/Grid")
     private @ResponseBody Map<String, Object> filter(@RequestBody FilterDTO fliterDTO){
@@ -125,4 +142,6 @@ public class GridController {
          }
          return response;
      };
+
+
 } // end Controller

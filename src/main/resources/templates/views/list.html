@@ -34,7 +34,6 @@
                 <option value="프랑스">프랑스</option>
                 <option value="독일">독일</option>
             </select>
-
         <div>
             <input id="filterCityBtn" type="checkbox" value="">전체</input>
             <div name="filter" id="filterCity">
@@ -57,18 +56,26 @@
         <button id="addBtn">추가</button>
         <button id="saveBtn">저장</button>
         <button id="searchBtn">조회</button>
-
         <a href="http://localhost:9090/ExcelLoad">엑셀 다운로드</a>
         <button id="deleteBtn">삭제</button>
     </div>
+    <div>
+        <label><input onclick="switchToKorean()" type="radio" name="language" value="kor" checked>korea</label>
+        <label><input onclick="switchToEnglish()" type="radio" name="language" value="eng">english</label>
+    </div>
 </header>
+
 <!--검색 영역-->
 <article>
     <div class="container mt-5">
-        <div class="table-responsive">  <!--스크롤 주는 곳-->
+        <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead class="thead-dark">
                     <tr>
+                        <th colspan="6">장소</th> <!-- 전체 테이블의 머리글로 "장소" 추가 -->
+                    </tr>
+                    <tr class="table-header">
+                        <th hidden>NO.</th>
                         <th>선택</th>
                         <th>아이디</th>
                         <th>이름</th>
@@ -79,6 +86,7 @@
                 </thead>
                 <tbody id="addList">
                     <tr th:each="grid : ${gridData}" class="gridData"> <!-- grid => (id=4, user_id=pat2, name=토토, gender=남, regDate=2024-06-23T00:00, nation=독일, city=브레멘) -->
+                        <td hidden><p class="gridId" th:text="${grid.grid_id}"></p></td>
                         <td><input class="selectBox" type="checkbox"></td>
                         <td><input class="userId" type="text" th:value="${grid.user_id}" disabled></td>
                         <td><input class="userName" type="text" th:value="${grid.name}"></td>
@@ -118,6 +126,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
+                <input hidden id="gridId"></input>
                         <p><input id="modalUserId" type="text"  disabled></p>
                         <p><input id="modalName" type="text"></p>
                         <p class="modalGender">
@@ -132,6 +141,9 @@
                         <select id="modalCity" name="modal">
                             <option value="">-- 도시 선택 --</option>
                         </select>
+            </div>
+            <div>
+                <input type="button" id="modalLink" value="Link"></input>
             </div>
             <div class="modal-footer">
                 <button id="changbtn" type="button"  class="btn btn-primary">저장</button>

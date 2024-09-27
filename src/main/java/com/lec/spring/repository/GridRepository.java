@@ -13,6 +13,8 @@ public interface GridRepository {
     // 조회용
     List<GridDTO> findAll();
 
+    GridDTO linkSearch(Long grid_id);
+
     // 모든 국적 및 도시 조회용
     List<Nation> findAllNation();
 

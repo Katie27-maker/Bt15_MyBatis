@@ -102,8 +102,15 @@ public class GridServiceImpl implements GridService {
 
     public List<GridDTO> list(){
         List<GridDTO> result = gridRepository.findAll();
+        System.out.println(result);
         return result;
     };
+
+    public GridDTO linkSearch(Long grid_id){
+        System.out.println(grid_id);
+        GridDTO gridDTO = gridRepository.linkSearch(grid_id);
+        return gridDTO;
+    }
 
     public List<Nation> findAllNation(){
         List<Nation> result = gridRepository.findAllNation();

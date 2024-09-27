@@ -11,6 +11,8 @@ public interface GridService {
 
     List<GridDTO> list();
 
+    GridDTO linkSearch(Long grid_id);
+
     List<GridDTO> fliterList(FilterDTO filterDTO);
 
     default void deleteById(List<String> deleteIdList) {

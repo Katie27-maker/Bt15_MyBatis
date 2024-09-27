@@ -1,4 +1,4 @@
-// 설별 색상
+// 성별 색상
 function changeGenderColor(element) {
     const row = element.closest('tr'); // 현재 성별 라디오 버튼이 있는 <tr> 요소를 찾음
     const isMale = element.value === '남'; // 선택된 성별이 '남'인지 여부 확인
@@ -13,6 +13,31 @@ function changeGenderColor(element) {
     });
 }
 
+// 테이블 헤더를 다시 한국어로 변경하는 함수
+function switchToKorean() {
+    document.querySelector(".table-header").innerHTML = `
+            <th>선택</th>
+            <th>아이디</th>
+            <th>이름</th>
+            <th>성별</th>
+            <th>국가</th>
+            <th>도시</th>
+        `;
+    document.querySelector(".thead-dark th").textContent = "장소";
+}
+
+// 테이블 헤더를 영어로 변경하는 함수
+function switchToEnglish() {
+    document.querySelector(".table-header").innerHTML = `
+        <th>Select</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Country</th>
+        <th>City</th>
+    `;
+    document.querySelector(".thead-dark th").textContent = "Location";
+}
 
 
 // 초기 로드 시 선택된 성별에 따라 배경색을 설정
@@ -199,44 +224,73 @@ $(function () {
     })
 
 
-        // 모달 관련 부분
-        $('.gridData').dblclick(function () {
-            // 여기에 제이쿼리로 모 달창 disply를 block이든 flex로 바꾸는 코드 생성해보봠.
+    // 모달 관련 부분
+    $('.gridData').dblclick(function () {
+        // 여기에 제이쿼리로 모 달창 disply를 block이든 flex로 바꾸는 코드 생성해보봠.
 
-            // $('#userModal').style.display = 'block';
-            $('#userModal').css('display', 'block');
-            // 위 주석 사이에
-            // 여기 아래부터 제이쿼리로 데이터 넣어야하는 태그들 제이쿼리로 불러와서 value값에 아래 selectedData에 있는 것처럼 넣어봠
+        // $('#userModal').style.display = 'block';
+        $('#userModal').css('display', 'block');
+        // 위 주석 사이에
+        // 여기 아래부터 제이쿼리로 데이터 넣어야하는 태그들 제이쿼리로 불러와서 value값에 아래 selectedData에 있는 것처럼 넣어봠
+        $('#gridId').val($(this).find(".gridId").text());    // 링크 부분
+        $('#modalUserId').val($(this).find(".userId").val());   // 1. 모달태그( ), 2.
+        $('#modalName').val($(this).find(".userName").val());
+        if ($(this).find(".userGender:checked").val() === "남") {
+            // 모달 창에서 남자 태그 체크하는 코드 작성
+            $("#modalMale").prop("checked", true);
+        } else {
+            // 모달 창에서 여자 태그 체크하는 코드 작성
+            $("#modalFemale").prop("checked", true);
+        }
 
-            $('#modalUserId').val($(this).find(".userId").val());   // 1. 모달태그( ), 2.
-            $('#modalName').val($(this).find(".userName").val());
-            if ($(this).find(".userGender:checked").val() === "남") {
-                // 모달 창에서 남자 태그 체크하는 코드 작성
-                $("#modalMale").prop("checked", true);
-            } else {
-                // 모달 창에서 여자 태그 체크하는 코드 작성
-                $("#modalFemale").prop("checked", true);
+
+        // 나라 모달창 가져오기
+        $('#modalNation').val($(this).find(".userNation").val());
+        nationBtnChange($('#modalNation')[0]);
+        $('#modalCity').val($(this).find(".userCity").val());
+
+
+        // 모달 창 닫기 함수
+        $("#closebtn").click(function () {
+            $('#userModal').fadeOut();
+        })
+
+        // let selectedData  = {
+        //     'let userId': $(this).find(".userId").val(),
+        //     'let name' : $(this).find(".userName").val(),
+        //     'let gender' : $(this).find(".userGender:checked").val(),
+        //     'let nation' : $(this).find(".userNation").val(),
+        //     'let city' : $(this).find(".userCity").val(),
+        // }
+    });
+
+    // 모달 링크 함수
+    $('#modalLink').click(function () {
+        let grid_id =  $('#gridId').val();
+        console.log(grid_id)
+        alert("눌러짐");
+        $.ajax({
+            url: `/GridLink?grid_id=${grid_id}`,
+            type: "GET",
+            dataType: 'json',
+            success: function (data, status) {
+                if (status === 'success') {
+                    if (data.status !== "OK")
+                        alert("필터 데이터 요청 실패")
+                    else {
+                        console.log("디테일 데이터");
+                        let gridData = data.data;
+                        let nationList = data.nationData;
+                        let allNationList = data.allNationList;
+                        reloading([gridData],nationList, allNationList,)
+                    }
+                }
+                $(".gridId").parents("td")[0].hidden = false;
+                $(".selectBox").parents("td")[0].hidden = true;
+                $("#userModal").css({display:"none"});
             }
 
-
-            // 나라 모달창 가져오기
-            $('#modalNation').val($(this).find(".userNation").val());
-            nationBtnChange($('#modalNation')[0]);
-            $('#modalCity').val($(this).find(".userCity").val());
-
-
-            // 모달 창 닫기 함수
-            $("#closebtn").click(function () {
-                $('#userModal').fadeOut();
-            })
-
-            // let selectedData  = {
-            //     'let userId': $(this).find(".userId").val(),
-            //     'let name' : $(this).find(".userName").val(),
-            //     'let gender' : $(this).find(".userGender:checked").val(),
-            //     'let nation' : $(this).find(".userNation").val(),
-            //     'let city' : $(this).find(".userCity").val(),
-            // }
+        })
         });
 
 
@@ -247,35 +301,38 @@ $(function () {
         //     }
         // })
 
-    
+
         $('#gMale, #gFmale').click(function () {
             console.log("성별 눌러짐")
-                let gender = $('#gMale').is(':checked') ? '남' : ($('#gFmale').is(':checked') ? '여' : null);
-                    let filterData = {
-                        'user_id': checkData($(`#idBox`).val()),
-                        'name': checkData($(`#nameBox`).val()),
-                        'gender': gender,
-                        'startRegDate': checkDateData($(`#startDate`).val()),
-                        'endRegDate': checkDateData($(`#endDate`).val()),
-                        'nation': checkData($(`#filterNation`).val()),
-                        'city': checkData($(`#filterCity`).val()),
-                    };
-                function checkData(data) {
-                    if (data === "") return null;
-                    else return data;
-                }
-                function checkDateData(data) {
-                    if (data === "") return null;
-                    else return new Date(data);
-                }
-                $.ajax({
-                    url: "/searchByGender",
-                    type: "POST",
-                    cache: false,
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify(filterData),
-                    dataType: 'json',
-                    success: function (data, status) {
+            let gender = $('#gMale').is(':checked') ? '남' : ($('#gFmale').is(':checked') ? '여' : null);
+            let filterData = {
+                'user_id': checkData($(`#idBox`).val()),
+                'name': checkData($(`#nameBox`).val()),
+                'gender': gender,
+                'startRegDate': checkDateData($(`#startDate`).val()),
+                'endRegDate': checkDateData($(`#endDate`).val()),
+                'nation': checkData($(`#filterNation`).val()),
+                'city': checkData($(`#filterCity`).val()),
+            };
+
+            function checkData(data) {
+                if (data === "") return null;
+                else return data;
+            }
+
+            function checkDateData(data) {
+                if (data === "") return null;
+                else return new Date(data);
+            }
+
+            $.ajax({
+                url: "/searchByGender",
+                type: "POST",
+                cache: false,
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(filterData),
+                dataType: 'json',
+                success: function (data, status) {
                     if (status === 'success') {
                         if (data.status !== "OK")
                             alert("필터 데이터 요청 실패")
@@ -302,14 +359,17 @@ $(function () {
                 'nation': checkData($(`#filterNation`).val()),
                 'city': checkData($(`#filterCity`).val()),
             }
+
             function checkData(data) {
                 if (data === "") return null;
                 else return data;
             }
+
             function checkDateData(data) {
                 if (data === "") return null;
                 else return new Date(data);
             }
+
             $.ajax({
                 url: "/Grid",
                 type: "POST",
@@ -334,13 +394,15 @@ $(function () {
             });
         })
 
-    //#페이지 로딩
-    function reloading(gridList, nationList, allNationList) {
-        $('#addList').empty();
-        gridList.forEach(grid => {
-            let gridTag =
-                `<tr class="gridData">
-                            <td><input class="gridId" type="checkbox"></td>
+        //#페이지 로딩
+        function reloading(gridList, nationList, allNationList) {
+            $('#addList').empty();
+            gridList.forEach(grid => {
+                let grid_id = grid.grid_id;
+                let gridTag =
+                    `<tr class="gridData">
+                            <td hidden><p class="gridId">${grid_id}</p></td>
+                            <td><input class="selectBox" type="checkbox"></td>
                             <td><input class="userId" type="text" value="${grid.user_id}" disabled></td>
                             <td><input class="userName" type="text" value="${grid.name}"></td>
                             <td>
@@ -353,34 +415,34 @@ $(function () {
                                 <select class="userNation" name="${grid.user_id}" value=${grid.nation} onchange="nationBtnChange(this)>
                                     <option value="">-- 국가 선택 --</option>
                                     `
-            nationList.forEach(nation => {
-                gridTag += `<option id="${grid.user_id + 'Nation'}" value="${nation}" ${nation === grid.nation ? 'selected' : ''}>${nation}</option>`;
-            });
-            gridTag += `</select>
+                nationList.forEach(nation => {
+                    gridTag += `<option id="${grid.user_id + 'Nation'}" value="${nation}" ${nation === grid.nation ? 'selected' : ''}>${nation}</option>`;
+                });
+                gridTag += `</select>
                                         </td>
                                         <td>
                                             <select class="userCity" value="${grid.city}">
                                                 <option value="">-- 도시 선택 --</option>`
-            //cityList의 forEach 구간
-            allNationList.forEach(data => {
-                if (data.nation === grid.nation) {
-                    gridTag += `<option id="${grid.user_id + 'City'}" value="${data.city}" ${data.city === grid.city ? 'selected' : ''}>${data.city}</option>`;
-                }
-            });
-            //city 하단구간
-            gridTag += `</select>
+                //cityList의 forEach 구간
+                allNationList.forEach(data => {
+                    if (data.nation === grid.nation) {
+                        gridTag += `<option id="${grid.user_id + 'City'}" value="${data.city}" ${data.city === grid.city ? 'selected' : ''}>${data.city}</option>`;
+                    }
+                });
+                //city 하단구간
+                gridTag += `</select>
                                         </td>
                                     </tr>`
-            $('#addList').append(gridTag);
+                $('#addList').append(gridTag);
 
-            if (grid.gender === "남") {
-                $(`.userGender#male[name="${grid.user_id}"]`).prop('checked', true);
-            } else {
-                $(`.userGender#female[name="${grid.user_id}"]`).prop('checked', true);
-            }
-            changeGenderColor(document.querySelector(`.userGender[name="${grid.user_id}"]:checked`));
-        })
-    }
+                if (grid.gender === "남") {
+                    $(`.userGender#male[name="${grid.user_id}"]`).prop('checked', true);
+                } else {
+                    $(`.userGender#female[name="${grid.user_id}"]`).prop('checked', true);
+                }
+                changeGenderColor(document.querySelector(`.userGender[name="${grid.user_id}"]:checked`));
+            })
+        }
 
         //#삭제 영역
         $(`#deleteBtn`).click(function () {
@@ -421,10 +483,11 @@ $(function () {
             }
         })
 
-        Object.keys(cityList).forEach(city=>{
+        Object.keys(cityList).forEach(city => {
             let optionNation = document.createElement('option');
             optionNation.value = city;
             optionNation.text = city;
             $('#modalNation').append(optionNation);
         });
+
     })

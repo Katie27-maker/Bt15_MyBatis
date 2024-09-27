@@ -46,12 +46,20 @@
 --                g.name "name",
 --                g.gender "gender",
 --                g.regDate "regDate",
+#                 g.grid_id "gridId",
 --                n.nation "nation",
 --                n.city "city"
         From grid g, nation n
         where
             g.nation_id = n.id
         order by g.regDate desc
+    </select>
+
+    <select id="linkSearch" resultType="com.lec.spring.domain.GridDTO">
+        select *
+        From grid g, nation n
+        where
+            g.nation_id = n.id AND g.grid_id = #{grid_id}
     </select>
 
     <select id="search" resultMap="mapGrid">
@@ -105,5 +113,8 @@
         from nation
         order by nation.id desc
     </select>
+
+<!--    페이징 쿼리문-->
+
 
 </mapper>

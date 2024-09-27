@@ -17,4 +17,6 @@ public class GridDTO {
     private LocalDateTime regDate;
     private String nation;
     private String city;
+
+    private Long grid_id;
 }
