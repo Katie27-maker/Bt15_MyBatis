@@ -3,6 +3,7 @@ package com.lec.spring.controller;
 import com.lec.spring.domain.FilterDTO;
 import com.lec.spring.domain.GridDTO;
 import com.lec.spring.domain.Nation;
+import com.lec.spring.domain.Pagination;
 import com.lec.spring.service.GridService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,20 @@ public class GridController {
 
     // 사이트 접속시 모든 그리드 리스트 호출
     @GetMapping("/Grid")
-    public String mainList(Model model){
+    public String mainList(Model model,
+                           @RequestParam(required=false, defaultValue="1") Integer index,           //  쪽 인덱스 번호
+                           @RequestParam(required = false, defaultValue = "1") Integer range ) {    //  쪽 번호
+
+        System.out.println("index : " + index);
+        System.out.println("range : " + range);
+        Pagination pagination = new Pagination();
+        pagination.setCurrPageNo(((range - 1) * 5)  + index);    // 👍 현재 페이지 구하는 공식
+
         List<GridDTO> gridData = gridService.list();
+        pagination.setDefaultValue(gridData.size(), range);      // 페이지네이션 초기화
+        List<GridDTO> resultGridData = gridData.subList(((pagination.getCurrPageNo()-1)* pagination.getPageSize()),
+                                                          Math.min(pagination.getCurrPageNo() * pagination.getPageSize(),gridData.size()));
+
         List<Nation> allNationList = gridService.findAllNation();
         List<String> nationList = allNationList.stream().map(data->data.getNation()).toList();
         Map<String, List<String>> cityList = new HashMap<>();
@@ -43,10 +56,11 @@ public class GridController {
                     .map(Nation::getCity).toList());
         });
         Set<String> resultNationList = new HashSet<>(nationList);
-        System.out.println(gridData);
+        System.out.println(resultGridData);
         System.out.println(resultNationList);
         System.out.println(cityList);
-        model.addAttribute("gridData",gridData);
+        model.addAttribute("pageData", pagination);
+        model.addAttribute("gridData",resultGridData);
         model.addAttribute("nationData",resultNationList);
         model.addAttribute("cityList", cityList);
         return "list";
@@ -58,7 +72,7 @@ public class GridController {
         GridDTO gridData = gridService.linkSearch(grid_id);
         List<Nation> allNationList = gridService.findAllNation();
         List<String> nationList = allNationList.stream().map(data->data.getNation()).toList();
-        Set<String> resultNationList = new HashSet<>(nationList);
+        Set<String> resultNationList = new HashSet <>(nationList);
         System.out.println(gridData);
         Map<String, Object> response = new HashMap<>();
         response.put("status", "OK");
@@ -71,32 +85,54 @@ public class GridController {
 
     // 필터링 컨트롤러
     @PostMapping("/Grid")
-    private @ResponseBody Map<String, Object> filter(@RequestBody FilterDTO fliterDTO){
+    private @ResponseBody Map<String, Object> filter(@RequestBody FilterDTO fliterDTO,
+                                                     @RequestParam(required=false, defaultValue="1") Integer index,           //  쪽 인덱스 번호
+                                                     @RequestParam(required = false, defaultValue = "1") Integer range){
         System.out.println("필터 작업중...");
         List<GridDTO> resultFilter = gridService.fliterList(fliterDTO);
         List<Nation> allNationList = gridService.findAllNation();
+
+        Pagination pagination = new Pagination();
+        pagination.setDefaultValue(resultFilter.size(), range);      // 페이지네이션 초기화
+        pagination.setCurrPageNo(((range - 1) * 5)  + index);    // 👍 현재 페이지 구하는 공식
+        List<GridDTO> resultGridData = resultFilter.subList(((pagination.getCurrPageNo()-1)* pagination.getPageSize()),
+                Math.min(pagination.getCurrPageNo() * pagination.getPageSize(),resultFilter.size()));
+
         List<String> nationList = allNationList.stream().map(data->data.getNation()).toList();
         Set<String> resultNationList = new HashSet<>(nationList);
         Map<String, Object> response = new HashMap<>();
         response.put("status", "OK");
-        response.put("data", resultFilter);
+        response.put("data", resultGridData);
         response.put("allNationList",allNationList);
         response.put("nationData",resultNationList);
+        response.put("pageData", pagination);
+
         return response;
     }
 
     @PostMapping("/searchByGender")
-    private @ResponseBody Map<String, Object> searchByGender(@RequestBody FilterDTO fliterDTO){
+    private @ResponseBody Map<String, Object> searchByGender(@RequestBody FilterDTO fliterDTO,
+                                                             @RequestParam(required=false, defaultValue="1") Integer index,           //  쪽 인덱스 번호
+                                                             @RequestParam(required = false, defaultValue = "1") Integer range){
         System.out.println("젠더 작업 중.");
         List<GridDTO> resultFilter = gridService.fliterList(fliterDTO);
         List<Nation> allNationList = gridService.findAllNation();
         List<String> nationList = allNationList.stream().map(data->data.getNation()).toList();
         Set<String> resultNationList = new HashSet<>(nationList);
         Map<String, Object> response = new HashMap<>();
+
+        Pagination pagination = new Pagination();
+        pagination.setDefaultValue(resultFilter.size(), range);
+
+        pagination.setCurrPageNo(((range - 1) * 5)  + index);    // 👍 현재 페이지 구하는 공식
+        List<GridDTO> genderGridData = resultFilter.subList(((pagination.getCurrPageNo()-1)* pagination.getPageSize()),
+                Math.min(pagination.getCurrPageNo() * pagination.getPageSize(),resultFilter.size()));
+
         response.put("status", "OK");
-        response.put("data", resultFilter);
+        response.put("data", genderGridData);
         response.put("allNationList",allNationList);
         response.put("nationData",resultNationList);
+        response.put("pageData", pagination);
         System.out.println("넘어오기 완료");
         return response;
     }

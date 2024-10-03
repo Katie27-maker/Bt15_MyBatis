@@ -24,6 +24,21 @@ function switchToKorean() {
             <th>도시</th>
         `;
     document.querySelector(".thead-dark th").textContent = "장소";
+    document.getElementById("idBox").placeholder='아이디';
+    document.getElementById("nameBox").placeholder='이름';
+    document.querySelector('label[for=\"gMale\"]').textContent = '남';
+    document.querySelector('label[for=\"gFmale\"]').textContent = '여';
+
+    var selectElement = document.getElementById('filterNation');
+    selectElement.options[0].text = '-- 국가 선택 --';
+
+    document.getElementById('addBtn').innerText = '추가'
+    document.getElementById('saveBtn').innerText = '저장'
+    document.getElementById('searchBtn').innerText = '조회'
+    document.getElementById('deleteBtn').innerText = '삭제'
+    document.getElementById('exceld').innerText = '엑셀 다운로드'
+
+
 }
 
 // 테이블 헤더를 영어로 변경하는 함수
@@ -37,6 +52,22 @@ function switchToEnglish() {
         <th>City</th>
     `;
     document.querySelector(".thead-dark th").textContent = "Location";
+    document.getElementById("idBox").placeholder='ID';
+    document.getElementById("nameBox").placeholder='NAME';
+    document.querySelector('label[for=\"gMale\"]').textContent = 'Male';
+    document.querySelector('label[for=\"gFmale\"]').textContent = 'Fmale';
+
+    var selectElement = document.getElementById('filterNation');
+    selectElement.options[0].text = '-- Select a Country --';
+
+    document.getElementById('addBtn').innerText = 'Add'
+    document.getElementById('saveBtn').innerText = 'Save'
+    document.getElementById('searchBtn').innerText = 'inquiry'
+    document.getElementById('deleteBtn').innerText = 'delete'
+    document.getElementById('exceld').innerText = 'Excel download'
+
+
+
 }
 
 
@@ -338,6 +369,7 @@ $(function () {
                             alert("필터 데이터 요청 실패")
                         else {
                             console.log("저장된 데이터");
+                            console.log(data)
                             let gridList = data.data;
                             let nationList = data.nationData;
                             let allNationList = data.allNationList;
