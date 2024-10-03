@@ -373,7 +373,8 @@ $(function () {
                             let gridList = data.data;
                             let nationList = data.nationData;
                             let allNationList = data.allNationList;
-                            reloading(gridList, nationList, allNationList)
+                            let pageData = data.pageData;
+                            reloading(gridList, nationList, allNationList, pageData)
                         }
                     }
                 }
@@ -419,7 +420,8 @@ $(function () {
                             let gridList = data.data;
                             let nationList = data.nationData;
                             let allNationList = data.allNationList;
-                            reloading(gridList, nationList, allNationList);
+                            let pageData = data.pageData;
+                            reloading(gridList, nationList, allNationList, pageData);
                         }
                     }
                 }
@@ -427,8 +429,9 @@ $(function () {
         })
 
         //#페이지 로딩
-        function reloading(gridList, nationList, allNationList) {
+        function reloading(gridList, nationList, allNationList, pageData) {
             $('#addList').empty();
+            $('#pageNation').empty();
             gridList.forEach(grid => {
                 let grid_id = grid.grid_id;
                 let gridTag =
@@ -474,6 +477,13 @@ $(function () {
                 }
                 changeGenderColor(document.querySelector(`.userGender[name="${grid.user_id}"]:checked`));
             })
+            for (let pageNumber = pageData.startPage; pageNumber <= pageData.endPage; pageNumber++) {
+
+                let pageLink = "<input>"  // 2024 10 04 요기부터
+
+                $('#pageNation').append()
+            }
+
         }
 
         //#삭제 영역

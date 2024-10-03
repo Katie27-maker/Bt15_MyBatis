@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class Pagination {
 
     private int currPageNo; // 현재 페이지
+    private int currRange; // 현재 쪽
     private int startPage; // 한 쪽에 첫번째 페이지
     private int endPage;  // 한 쪽에 마지막 페이지
     private int pageSize = 5;   // 페이지 당 나오는 row 갯수

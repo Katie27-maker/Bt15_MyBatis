@@ -41,7 +41,7 @@ public class GridController {
         System.out.println("range : " + range);
         Pagination pagination = new Pagination();
         pagination.setCurrPageNo(((range - 1) * 5)  + index);    // 👍 현재 페이지 구하는 공식
-
+        pagination.setCurrRange(range);
         List<GridDTO> gridData = gridService.list();
         pagination.setDefaultValue(gridData.size(), range);      // 페이지네이션 초기화
         List<GridDTO> resultGridData = gridData.subList(((pagination.getCurrPageNo()-1)* pagination.getPageSize()),

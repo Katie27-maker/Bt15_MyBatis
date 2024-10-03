@@ -119,12 +119,10 @@
             </table>
             <div>
                  <nav>
-                     <ul>
-                         <li></li>
-                         <li></li>
-                         <li></li>
-                         <li></li>
-                         <li></li>
+                     <ul id="pageNation">
+                         <li th:each="pageNumber : ${#numbers.sequence(pageData.startPage, pageData.endPage)}">
+                             <a th:href="@{/Grid(range=${pageData.currRange},index=${pageNumber})}" th:text="${pageNumber}"></a>
+                         </li>
                      </ul>
                  </nav>
             </div>
